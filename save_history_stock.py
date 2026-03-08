@@ -16,17 +16,21 @@ def save_historical_data(ticker, period="1y", interval="1d", output_dir="data", 
         ticker (str): Ticker symbol
         period (str): Time period
         interval (str): Data interval
-        output_dir (str): Directory where files will be saved
+        output_dir (str): Base directory where files will be saved
         save_stats (bool): Whether to save the stats CSV file
     
     Returns:
         tuple: (historical filename, stats filename or None, log filename)
     """
     try:
-        # Create output directory if it does not exist
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-            print(f"Directory created: {output_dir}")
+        # Create output directories
+        csv_dir = os.path.join(output_dir, "historical")
+        log_dir = os.path.join(output_dir, "historical", "logs")
+        
+        for directory in [csv_dir, log_dir]:
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+                print(f"Directory created: {directory}")
         
         print(f"\n{'='*60}")
         print(f"Processing: {ticker}")
@@ -39,14 +43,14 @@ def save_historical_data(ticker, period="1y", interval="1d", output_dir="data", 
         
         if hist.empty:
             print(f"No data found for {ticker}")
-            return None, None
+            return None, None, None
         
         # Normalize ticker for filename usage
         ticker_clean = ticker.replace('^', 'INDEX_')
         date_str = datetime.now().strftime("%Y%m%d")
         
         # Save historical data
-        hist_filename = os.path.join(output_dir, f"{ticker_clean}_historical_{period}_{date_str}.csv")
+        hist_filename = os.path.join(csv_dir, f"{ticker_clean}_historical_{period}_{date_str}.csv")
         hist.to_csv(hist_filename)
         print(f"✓ Historical data saved: {hist_filename}")
         print(f"  Records: {len(hist)}")
@@ -74,7 +78,7 @@ def save_historical_data(ticker, period="1y", interval="1d", output_dir="data", 
             hist_with_stats['All_Time_Min'] = hist_with_stats['Low'].expanding().min()
 
             # Save stats data
-            stats_filename = os.path.join(output_dir, f"{ticker_clean}_with_stats_{period}_{date_str}.csv")
+            stats_filename = os.path.join(csv_dir, f"{ticker_clean}_with_stats_{period}_{date_str}.csv")
             hist_with_stats.to_csv(stats_filename)
             print(f"✓ Stats data saved: {stats_filename}")
         else:
@@ -98,8 +102,8 @@ def save_historical_data(ticker, period="1y", interval="1d", output_dir="data", 
             'Download Date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
         
-        # Save summary to log (instead of CSV)
-        log_filename = os.path.join(output_dir, f"{ticker_clean}_info_{date_str}.log")
+        # Save summary to log
+        log_filename = os.path.join(log_dir, f"{ticker_clean}_info_{date_str}.log")
         with open(log_filename, "w", encoding="utf-8") as log_file:
             log_file.write(f"Information summary - {ticker}\n")
             log_file.write("=" * 60 + "\n")

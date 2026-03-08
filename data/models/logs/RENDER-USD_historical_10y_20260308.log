@@ -1,0 +1,33 @@
+2026-03-08 16:28:25,604 - INFO - 
+Processing: RENDER-USD_historical_10y_20260308.csv
+2026-03-08 16:28:25,616 - INFO - Total records: 2096
+2026-03-08 16:28:25,618 - INFO - Date range: 2020-06-11 00:00:00+00:00 to 2026-03-08 00:00:00+00:00
+2026-03-08 16:28:25,618 - INFO - Close price range: $0.05 - $13.15
+2026-03-08 16:28:25,620 - INFO - 
+Train set: 1731 records (2020-06-11 00:00:00+00:00 to 2025-03-08 00:00:00+00:00)
+2026-03-08 16:28:25,621 - INFO - Validation set: 365 records (2025-03-09 00:00:00+00:00 to 2026-03-08 00:00:00+00:00)
+2026-03-08 16:28:25,625 - INFO - 
+Sequence shapes:
+2026-03-08 16:28:25,631 - INFO -   X_train: (1671, 60, 1), y_train: (1671, 1)
+2026-03-08 16:28:25,631 - INFO -   X_val: (305, 60, 1), y_val: (305, 1)
+2026-03-08 16:28:25,631 - INFO - 
+Building LSTM model...
+2026-03-08 16:28:25,689 - INFO - None
+2026-03-08 16:28:25,689 - INFO - 
+Training model (70 epochs)...
+2026-03-08 16:30:27,448 - INFO - 
+Making predictions...
+2026-03-08 16:30:28,619 - INFO - 
+======================================================================
+2026-03-08 16:30:28,619 - INFO - TRAINING RESULTS - RENDER-USD_historical_10y_20260308.csv
+2026-03-08 16:30:28,620 - INFO - ======================================================================
+2026-03-08 16:30:28,620 - INFO - Training RMSE: $0.28
+2026-03-08 16:30:28,620 - INFO - Training MAE: $0.18
+2026-03-08 16:30:28,620 - INFO - Validation RMSE: $0.21
+2026-03-08 16:30:28,620 - INFO - Validation MAE: $0.16
+2026-03-08 16:30:28,644 - INFO - 
+Model saved to: data\models\RENDER-USD_historical_10y_20260308_lstm_model.h5
+2026-03-08 16:30:28,644 - INFO - 
+Generating plots...
+2026-03-08 16:30:29,205 - INFO - 
+Completed RENDER-USD_historical_10y_20260308.csv!

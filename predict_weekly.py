@@ -7,6 +7,7 @@ Supports both CSV files and live data from Yahoo Finance.
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
@@ -185,14 +186,15 @@ def main():
     print("LSTM MODEL INFERENCE - WEEKLY STOCK PREDICTION")
     print("=" * 70)
     
-    data_dir = Path("data")
+    data_models_dir = Path("data/models/")
+    data_historical_dir = Path("data/historical/")
     lookback = 60  # Must match training configuration
     
     # Find model file
     if args.model:
         model_path = Path(args.model)
     else:
-        model_files = list(data_dir.glob("*_lstm_model.h5"))
+        model_files = list(data_models_dir.glob("*_lstm_model.h5"))
         if not model_files:
             print("\nError: No trained model found in data folder.")
             print("Train a model first using train_lstm_model.py")
@@ -236,11 +238,11 @@ def main():
             # Extract ticker from model name
             model_stem = model_path.stem.replace("_lstm_model", "")
             csv_pattern = f"{model_stem}.csv"
-            csv_files = list(data_dir.glob(csv_pattern))
+            csv_files = list(data_historical_dir.glob(csv_pattern))
             
             if not csv_files:
                 # Fallback: find any historical CSV
-                csv_files = list(data_dir.glob("*_historical_*.csv"))
+                csv_files = list(data_historical_dir.glob("*_historical_*.csv"))
             
             if not csv_files:
                 print("\nError: No historical CSV found.")
@@ -314,15 +316,16 @@ def main():
     # Plot predictions
     print("\nGenerating visualization...")
     
-    # Show last 90 days + predictions
-    lookback_display = min(90, len(data))
+    # Show last 30 days + predictions (reduced for better prediction visibility)
+    lookback_display = min(30, len(data))
     recent_data = data.iloc[-lookback_display:]
     
     fig, ax = plt.subplots(figsize=(14, 7))
     
-    # Plot historical data
+    # Plot historical data with blue color and blue markers
     ax.plot(recent_data['Date'], recent_data['Close'], 
-            label='Historical', linewidth=2, color='blue')
+            label='Historical', linewidth=2, color='blue', marker='o', 
+            markersize=4, markerfacecolor='blue', markeredgecolor='blue')
     
     # Plot predictions
     all_dates = list(recent_data['Date']) + prediction_dates
@@ -340,8 +343,17 @@ def main():
     ax.axvline(x=recent_data['Date'].iloc[-1], color='gray', 
                linestyle=':', alpha=0.7, label='Prediction Start')
     
+    # Create blinking point for current price (last historical point)
+    current_date = recent_data['Date'].iloc[-1]
+    current_price = recent_data['Close'].iloc[-1]
+    blinking_point, = ax.plot([current_date], [current_price], 
+                              marker='o', markersize=15, 
+                              color='blue', markeredgecolor='white', 
+                              markeredgewidth=2, zorder=5)
+    
     # Formatting
-    ax.set_title(f'Stock Price Prediction - Next {args.days} Days', fontsize=14, fontweight='bold')
+    ax.set_title(f'{args.ticker} Stock Price - Next {args.days} Days (Current: ${current_price:.2f})', 
+                 fontsize=14, fontweight='bold')
     ax.set_xlabel('Date', fontsize=12)
     ax.set_ylabel('Close Price ($)', fontsize=12)
     ax.legend(fontsize=10)
@@ -349,6 +361,22 @@ def main():
     
     plt.xticks(rotation=45)
     plt.tight_layout()
+    
+    # Animation function for blinking effect
+    def animate(frame):
+        # Blink between visible and invisible (0.5 second intervals)
+        if frame % 2 == 0:
+            blinking_point.set_alpha(1.0)
+            blinking_point.set_markersize(15)
+        else:
+            blinking_point.set_alpha(0.3)
+            blinking_point.set_markersize(13)
+        return blinking_point,
+    
+    # Create animation (blinks every 500ms)
+    anim = animation.FuncAnimation(fig, animate, frames=100, 
+                                   interval=500, blit=True, repeat=True)
+    
     plt.show()
     
     print("\nInference completed successfully!")
