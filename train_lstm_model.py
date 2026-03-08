@@ -134,7 +134,7 @@ def main():
     data_models_dir = Path("data/models/")
     images_dir = Path("data/models/images/")
     lookback = 60  # Use last 60 days to predict next day
-    epochs = 70
+    epochs = 50
     batch_size = 32
     validation_days = 365  # Last year for validation
     
