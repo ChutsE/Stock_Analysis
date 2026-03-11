@@ -13,10 +13,30 @@ from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
 from datetime import timedelta
 import argparse
-import sys
 import multiprocessing
-from stock_data_extractor import get_historical_data
+import yfinance as yf
 
+
+def get_historical_data(ticker, period="1mo", interval="1d"):
+    """
+    Get historical stock data
+    
+    Args:
+        ticker (str): Stock ticker symbol
+        period (str): Time period (1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max)
+        interval (str): Data interval (1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h, 1d, 5d, 1wk, 1mo, 3mo)
+    
+    Returns:
+        DataFrame: Historical stock data
+    """
+    try:
+        stock = yf.Ticker(ticker)
+        hist = stock.history(period=period, interval=interval)
+        return hist
+    
+    except Exception as e:
+        print(f"Error fetching historical data for {ticker}: {e}")
+        return None
 
 def load_live_data(ticker, lookback=60):
     """

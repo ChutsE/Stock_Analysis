@@ -1,0 +1,33 @@
+2026-03-10 22:14:21,814 - INFO - 
+Processing: OXY_historical_max_20260310.csv
+2026-03-10 22:14:21,982 - INFO - Total records: 11136
+2026-03-10 22:14:21,985 - INFO - Date range: 1981-12-31 00:00:00-05:00 to 2026-03-10 00:00:00-04:00
+2026-03-10 22:14:21,986 - INFO - Close price range: $1.24 - $72.16
+2026-03-10 22:14:21,990 - INFO - 
+Train set: 10023 records (1981-12-31 00:00:00-05:00 to 2021-09-30 00:00:00-04:00)
+2026-03-10 22:14:21,990 - INFO - Validation set: 1113 records (2021-10-01 00:00:00-04:00 to 2026-03-10 00:00:00-04:00)
+2026-03-10 22:14:21,999 - INFO - 
+Sequence shapes:
+2026-03-10 22:14:22,001 - INFO -   X_train: (9963, 60, 1), y_train: (9963, 1)
+2026-03-10 22:14:22,001 - INFO -   X_val: (1053, 60, 1), y_val: (1053, 1)
+2026-03-10 22:14:22,001 - INFO - 
+Building LSTM model...
+2026-03-10 22:14:22,040 - INFO - None
+2026-03-10 22:14:22,040 - INFO - 
+Training model (50 epochs)...
+2026-03-10 22:20:59,548 - INFO - 
+Making predictions...
+2026-03-10 22:21:02,872 - INFO - 
+======================================================================
+2026-03-10 22:21:02,872 - INFO - TRAINING RESULTS - OXY_historical_max_20260310.csv
+2026-03-10 22:21:02,872 - INFO - ======================================================================
+2026-03-10 22:21:02,872 - INFO - Training RMSE: $0.78
+2026-03-10 22:21:02,873 - INFO - Training MAE: $0.57
+2026-03-10 22:21:02,873 - INFO - Validation RMSE: $1.31
+2026-03-10 22:21:02,873 - INFO - Validation MAE: $0.95
+2026-03-10 22:21:02,905 - INFO - 
+Model saved to: data\models\OXY_historical_max_20260310_lstm_model.h5
+2026-03-10 22:21:02,905 - INFO - 
+Generating plots...
+2026-03-10 22:21:03,410 - INFO - 
+Completed OXY_historical_max_20260310.csv!

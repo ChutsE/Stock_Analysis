@@ -1,0 +1,33 @@
+2026-03-10 22:10:00,363 - INFO - 
+Processing: BBAI_historical_max_20260310.csv
+2026-03-10 22:10:00,405 - INFO - Total records: 1239
+2026-03-10 22:10:00,405 - INFO - Date range: 2021-04-05 00:00:00-04:00 to 2026-03-10 00:00:00-04:00
+2026-03-10 22:10:00,406 - INFO - Close price range: $0.63 - $12.69
+2026-03-10 22:10:00,407 - INFO - 
+Train set: 1116 records (2021-04-05 00:00:00-04:00 to 2025-09-11 00:00:00-04:00)
+2026-03-10 22:10:00,407 - INFO - Validation set: 123 records (2025-09-12 00:00:00-04:00 to 2026-03-10 00:00:00-04:00)
+2026-03-10 22:10:00,408 - INFO - 
+Sequence shapes:
+2026-03-10 22:10:00,410 - INFO -   X_train: (1056, 60, 1), y_train: (1056, 1)
+2026-03-10 22:10:00,410 - INFO -   X_val: (63, 60, 1), y_val: (63, 1)
+2026-03-10 22:10:00,410 - INFO - 
+Building LSTM model...
+2026-03-10 22:10:00,561 - INFO - None
+2026-03-10 22:10:00,561 - INFO - 
+Training model (50 epochs)...
+2026-03-10 22:10:35,891 - INFO - 
+Making predictions...
+2026-03-10 22:10:36,694 - INFO - 
+======================================================================
+2026-03-10 22:10:36,694 - INFO - TRAINING RESULTS - BBAI_historical_max_20260310.csv
+2026-03-10 22:10:36,694 - INFO - ======================================================================
+2026-03-10 22:10:36,694 - INFO - Training RMSE: $0.45
+2026-03-10 22:10:36,694 - INFO - Training MAE: $0.30
+2026-03-10 22:10:36,694 - INFO - Validation RMSE: $0.36
+2026-03-10 22:10:36,694 - INFO - Validation MAE: $0.28
+2026-03-10 22:10:36,729 - INFO - 
+Model saved to: data\models\BBAI_historical_max_20260310_lstm_model.h5
+2026-03-10 22:10:36,729 - INFO - 
+Generating plots...
+2026-03-10 22:10:37,386 - INFO - 
+Completed BBAI_historical_max_20260310.csv!

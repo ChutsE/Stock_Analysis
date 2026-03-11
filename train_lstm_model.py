@@ -136,8 +136,8 @@ def main():
     lookback = 60  # Use last 60 days to predict next day
     epochs = 50
     batch_size = 32
-    validation_days = 365  # Last year for validation
-    
+     
+
     if not data_historical_dir.exists():
         print(f"\nError: Historical data directory not found: {data_historical_dir}")
         return
@@ -192,6 +192,7 @@ def main():
         data_scaled = scaler.fit_transform(data[['Close']].values)
         data['Close'] = data_scaled
         
+        validation_days = int(len(data) * 0.1) 
         # Split into train and validation
         train_data, val_data = split_train_validation(data, validation_days)
         logger.info(f"\nTrain set: {len(train_data)} records ({train_data['Date'].min()} to {train_data['Date'].max()})")

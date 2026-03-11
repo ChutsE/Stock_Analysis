@@ -1,0 +1,33 @@
+2026-03-10 22:10:37,394 - INFO - 
+Processing: ETH-USD_historical_max_20260310.csv
+2026-03-10 22:10:37,438 - INFO - Total records: 3044
+2026-03-10 22:10:37,438 - INFO - Date range: 2017-11-09 00:00:00+00:00 to 2026-03-11 00:00:00+00:00
+2026-03-10 22:10:37,439 - INFO - Close price range: $84.31 - $4831.35
+2026-03-10 22:10:37,478 - INFO - 
+Train set: 2740 records (2017-11-09 00:00:00+00:00 to 2025-05-10 00:00:00+00:00)
+2026-03-10 22:10:37,478 - INFO - Validation set: 304 records (2025-05-11 00:00:00+00:00 to 2026-03-11 00:00:00+00:00)
+2026-03-10 22:10:37,478 - INFO - 
+Sequence shapes:
+2026-03-10 22:10:37,478 - INFO -   X_train: (2680, 60, 1), y_train: (2680, 1)
+2026-03-10 22:10:37,478 - INFO -   X_val: (244, 60, 1), y_val: (244, 1)
+2026-03-10 22:10:37,478 - INFO - 
+Building LSTM model...
+2026-03-10 22:10:37,657 - INFO - None
+2026-03-10 22:10:37,657 - INFO - 
+Training model (50 epochs)...
+2026-03-10 22:12:31,664 - INFO - 
+Making predictions...
+2026-03-10 22:12:33,073 - INFO - 
+======================================================================
+2026-03-10 22:12:33,073 - INFO - TRAINING RESULTS - ETH-USD_historical_max_20260310.csv
+2026-03-10 22:12:33,073 - INFO - ======================================================================
+2026-03-10 22:12:33,073 - INFO - Training RMSE: $88.25
+2026-03-10 22:12:33,073 - INFO - Training MAE: $55.90
+2026-03-10 22:12:33,073 - INFO - Validation RMSE: $141.79
+2026-03-10 22:12:33,073 - INFO - Validation MAE: $103.65
+2026-03-10 22:12:33,124 - INFO - 
+Model saved to: data\models\ETH-USD_historical_max_20260310_lstm_model.h5
+2026-03-10 22:12:33,124 - INFO - 
+Generating plots...
+2026-03-10 22:12:33,540 - INFO - 
+Completed ETH-USD_historical_max_20260310.csv!
