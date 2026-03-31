@@ -1,0 +1,33 @@
+2026-03-25 21:10:13,967 - INFO - 
+Processing: PAXG-USD_historical_max_20260325.csv
+2026-03-25 21:10:14,021 - INFO - Total records: 2373
+2026-03-25 21:10:14,022 - INFO - Date range: 2019-09-26 00:00:00+00:00 to 2026-03-26 00:00:00+00:00
+2026-03-25 21:10:14,023 - INFO - Close price range: $1428.54 - $5536.53
+2026-03-25 21:10:14,023 - INFO - 
+Train set: 2136 records (2019-09-26 00:00:00+00:00 to 2025-07-31 00:00:00+00:00)
+2026-03-25 21:10:14,023 - INFO - Validation set: 237 records (2025-08-01 00:00:00+00:00 to 2026-03-26 00:00:00+00:00)
+2026-03-25 21:10:14,032 - INFO - 
+Sequence shapes:
+2026-03-25 21:10:14,032 - INFO -   X_train: (2076, 60, 1), y_train: (2076, 1)
+2026-03-25 21:10:14,032 - INFO -   X_val: (177, 60, 1), y_val: (177, 1)
+2026-03-25 21:10:14,032 - INFO - 
+Building LSTM model...
+2026-03-25 21:10:14,364 - INFO - None
+2026-03-25 21:10:14,364 - INFO - 
+Training model (50 epochs)...
+2026-03-25 21:13:15,682 - INFO - 
+Making predictions...
+2026-03-25 21:13:17,519 - INFO - 
+======================================================================
+2026-03-25 21:13:17,519 - INFO - TRAINING RESULTS - PAXG-USD_historical_max_20260325.csv
+2026-03-25 21:13:17,519 - INFO - ======================================================================
+2026-03-25 21:13:17,519 - INFO - Training RMSE: $37.31
+2026-03-25 21:13:17,519 - INFO - Training MAE: $28.70
+2026-03-25 21:13:17,519 - INFO - Validation RMSE: $208.23
+2026-03-25 21:13:17,519 - INFO - Validation MAE: $179.48
+2026-03-25 21:13:17,577 - INFO - 
+Model saved to: data\models\PAXG-USD_historical_max_20260325_lstm_model.h5
+2026-03-25 21:13:17,577 - INFO - 
+Generating plots...
+2026-03-25 21:13:19,752 - INFO - 
+Completed PAXG-USD_historical_max_20260325.csv!

@@ -1,0 +1,33 @@
+2026-03-11 19:43:48,507 - INFO - 
+Processing: DASH_historical_max_20260311.csv
+2026-03-11 19:43:48,532 - INFO - Total records: 1318
+2026-03-11 19:43:48,532 - INFO - Date range: 2020-12-09 00:00:00-05:00 to 2026-03-11 00:00:00-04:00
+2026-03-11 19:43:48,532 - INFO - Close price range: $43.06 - $281.74
+2026-03-11 19:43:48,538 - INFO - 
+Train set: 1187 records (2020-12-09 00:00:00-05:00 to 2025-09-02 00:00:00-04:00)
+2026-03-11 19:43:48,538 - INFO - Validation set: 131 records (2025-09-03 00:00:00-04:00 to 2026-03-11 00:00:00-04:00)
+2026-03-11 19:43:48,538 - INFO - 
+Sequence shapes:
+2026-03-11 19:43:48,538 - INFO -   X_train: (1127, 60, 1), y_train: (1127, 1)
+2026-03-11 19:43:48,544 - INFO -   X_val: (71, 60, 1), y_val: (71, 1)
+2026-03-11 19:43:48,544 - INFO - 
+Building LSTM model...
+2026-03-11 19:43:48,667 - INFO - None
+2026-03-11 19:43:48,667 - INFO - 
+Training model (50 epochs)...
+2026-03-11 19:44:42,678 - INFO - 
+Making predictions...
+2026-03-11 19:44:43,499 - INFO - 
+======================================================================
+2026-03-11 19:44:43,499 - INFO - TRAINING RESULTS - DASH_historical_max_20260311.csv
+2026-03-11 19:44:43,506 - INFO - ======================================================================
+2026-03-11 19:44:43,506 - INFO - Training RMSE: $6.68
+2026-03-11 19:44:43,506 - INFO - Training MAE: $5.20
+2026-03-11 19:44:43,506 - INFO - Validation RMSE: $7.72
+2026-03-11 19:44:43,506 - INFO - Validation MAE: $5.95
+2026-03-11 19:44:43,549 - INFO - 
+Model saved to: data\models\DASH_historical_max_20260311_lstm_model.h5
+2026-03-11 19:44:43,549 - INFO - 
+Generating plots...
+2026-03-11 19:44:44,225 - INFO - 
+Completed DASH_historical_max_20260311.csv!
