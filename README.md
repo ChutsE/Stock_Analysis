@@ -52,7 +52,7 @@ python monitor_stocks.py --tickers OXY AAPL --days 7
 Con modelo específico:
 
 ```bash
-python monitor_stocks.py --tickers OXY AAPL IVVPESO.MX --days 7 --model data/models/TU_MODELO.h5
+python monitor_stocks.py --ticker IVVPESO.MX OXY RENDER-USD SOL-USD BBAI ETH-USD --days 7
 ```
 
 ## Comandos útiles
