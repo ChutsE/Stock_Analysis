@@ -49,6 +49,12 @@ Salida esperada:
 python monitor_stocks.py --tickers OXY AAPL --days 7
 ```
 
+Para dibujar también predicciones iniciadas en días históricos recientes, usa `--past-days`. El valor indica cuántos días anteriores se añaden como anclas; el día actual siempre se incluye. Por ejemplo, muestra 6 líneas de 7 días cada una:
+
+```bash
+python monitor_stocks.py --tickers OXY AAPL --days 7 --past-days 5
+```
+
 Con modelo específico:
 
 ```bash

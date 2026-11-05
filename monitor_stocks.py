@@ -107,7 +107,20 @@ def predict_next_n_days(model, last_sequence, scaler, n_days=7):
     return predictions.flatten()
 
 
-def monitor_single_stock(ticker, model_path, days=7, lookback=60):
+def get_trading_dates_after(start_date, n_days):
+    """Return the next N weekdays after a date."""
+    dates = []
+    current_date = start_date
+
+    while len(dates) < n_days:
+        current_date = current_date + timedelta(days=1)
+        if current_date.weekday() < 5:
+            dates.append(current_date)
+
+    return dates
+
+
+def monitor_single_stock(ticker, model_path, days=7, lookback=60, past_days=0):
     """
     Monitor a single stock in its own process/window.
     
@@ -116,6 +129,7 @@ def monitor_single_stock(ticker, model_path, days=7, lookback=60):
         model_path (Path): Path to trained LSTM model
         days (int): Number of days to predict
         lookback (int): Lookback period for model input
+        past_days (int): Number of previous historical days to use as prediction anchors
     """
     try:
         # Set process title
@@ -130,30 +144,33 @@ def monitor_single_stock(ticker, model_path, days=7, lookback=60):
         model = tf.keras.models.load_model(model_path)
         
         # Load live data
-        data = load_live_data(ticker, lookback)
-        if data is None or len(data) < lookback:
-            print(f"[{ticker}] Insufficient data. Need at least {lookback} days.")
+        data = load_live_data(ticker, lookback + past_days)
+        minimum_records = lookback + past_days
+        if data is None or len(data) < minimum_records:
+            print(f"[{ticker}] Insufficient data. Need at least {minimum_records} days.")
             return
         
         # Prepare data
         scaler = MinMaxScaler(feature_range=(0, 1))
         all_data_scaled = scaler.fit_transform(data[['Close']].values)
-        last_sequence = all_data_scaled[-lookback:]
-        
-        # Make predictions
-        print(f"[{ticker}] Predicting next {days} days...")
-        predictions = predict_next_n_days(model, last_sequence, scaler, days)
-        
-        # Create prediction dates
-        last_date = data['Date'].iloc[-1]
-        prediction_dates = []
-        current_date = last_date
-        
-        for i in range(days):
-            current_date = current_date + timedelta(days=1)
-            while current_date.weekday() >= 5:
-                current_date = current_date + timedelta(days=1)
-            prediction_dates.append(current_date)
+        # Generate one forecast for each requested historical anchor, including today.
+        anchor_start = len(data) - 1 - past_days
+        forecasts = []
+        for anchor_index in range(anchor_start, len(data)):
+            last_sequence = all_data_scaled[anchor_index - lookback + 1:anchor_index + 1]
+            predictions = predict_next_n_days(model, last_sequence, scaler, days)
+            anchor_date = data['Date'].iloc[anchor_index]
+            forecasts.append({
+                "anchor_date": anchor_date,
+                "dates": get_trading_dates_after(anchor_date, days),
+                "prices": predictions,
+            })
+
+        current_forecast = forecasts[-1]
+        predictions = current_forecast["prices"]
+        prediction_dates = current_forecast["dates"]
+
+        print(f"[{ticker}] Predicting {days} days from {len(forecasts)} anchor(s)...")
         
         # Display predictions
         print(f"\n[{ticker}] PREDICTIONS:")
@@ -167,7 +184,7 @@ def monitor_single_stock(ticker, model_path, days=7, lookback=60):
             last_close = pred_price
         
         # Create visualization
-        lookback_display = min(30, len(data))
+        lookback_display = min(max(30, past_days + 1), len(data))
         recent_data = data.iloc[-lookback_display:]
         
         fig, ax = plt.subplots(figsize=(12, 6))
@@ -178,12 +195,28 @@ def monitor_single_stock(ticker, model_path, days=7, lookback=60):
                 markersize=4, markerfacecolor='blue', markeredgecolor='blue')
         
         # Plot predictions
-        transition_dates = [recent_data['Date'].iloc[-1]] + prediction_dates
-        transition_prices = [recent_data['Close'].iloc[-1]] + list(predictions)
-        
-        ax.plot(transition_dates, transition_prices, 
-                label='Predicted (Next Week)', linewidth=2, color='red', 
-                linestyle='--', marker='o', markersize=5)
+        for forecast_index, forecast in enumerate(forecasts):
+            transition_dates = [forecast["anchor_date"]] + forecast["dates"]
+            transition_prices = [
+                data.loc[data['Date'] == forecast["anchor_date"], 'Close'].iloc[0]
+            ] + list(forecast["prices"])
+            is_current = forecast_index == len(forecasts) - 1
+            label = (
+                'Predicted from current'
+                if is_current
+                else 'Predicted from past day' if forecast_index == 0 else None
+            )
+            ax.plot(
+                transition_dates,
+                transition_prices,
+                label=label,
+                linewidth=2 if is_current else 1.2,
+                color='red' if is_current else 'darkorange',
+                alpha=1.0 if is_current else 0.55,
+                linestyle='--',
+                marker='o' if is_current else None,
+                markersize=5,
+            )
         
         # Add vertical line at prediction start
         ax.axvline(x=recent_data['Date'].iloc[-1], color='gray', 
@@ -201,7 +234,7 @@ def monitor_single_stock(ticker, model_path, days=7, lookback=60):
         total_change = predictions[-1] - data['Close'].iloc[-1]
         total_change_pct = (total_change / data['Close'].iloc[-1]) * 100
         
-        ax.set_title(f'{ticker} - Next {days} Days | Current: ${current_price:.2f} | Predicted: ${predictions[-1]:.2f} ({total_change_pct:+.2f}%)', 
+        ax.set_title(f'{ticker} - {days} Days x {len(forecasts)} Anchors | Current: ${current_price:.2f} | Predicted: ${predictions[-1]:.2f} ({total_change_pct:+.2f}%)',
                      fontsize=12, fontweight='bold')
         ax.set_xlabel('Date', fontsize=10)
         ax.set_ylabel('Close Price ($)', fontsize=10)
@@ -258,14 +291,25 @@ def main():
         default=7,
         help="Number of days to predict (default: 7)"
     )
+    parser.add_argument(
+        "--past-days",
+        type=int,
+        default=0,
+        help="Number of previous days to use as additional prediction anchors (default: 0)"
+    )
     
     args = parser.parse_args()
+
+    if args.days < 1:
+        parser.error("--days must be at least 1")
+    if args.past_days < 0:
+        parser.error("--past-days cannot be negative")
     
     print("=" * 70)
     print("MULTI-STOCK MONITOR WITH LSTM PREDICTIONS")
     print("=" * 70)
     print(f"\nMonitoring {len(args.tickers)} stocks: {', '.join(args.tickers)}")
-    print(f"Prediction window: {args.days} days")
+    print(f"Prediction window: {args.days} days from {args.past_days + 1} anchor(s)")
     
     # Find model file
     data_models_dir = Path("data/models/")
@@ -296,7 +340,7 @@ def main():
     for ticker in args.tickers:
         p = multiprocessing.Process(
             target=monitor_single_stock,
-            args=(ticker, model_path, args.days, lookback),
+            args=(ticker, model_path, args.days, lookback, args.past_days),
             name=f"Monitor-{ticker}"
         )
         p.start()
