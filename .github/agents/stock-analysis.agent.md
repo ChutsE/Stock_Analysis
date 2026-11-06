@@ -18,6 +18,7 @@ Puedes operar estas funciones:
 - Reutilizar modelos `.h5` existentes en `data/models/`.
 - Preparar datos faltantes en `data/historical/` y explicar cuando se necesita entrenar un modelo con `train_lstm_model.py`.
 - Ejecutar `monitor_stocks.py` para inferencia LSTM de uno o varios tickers.
+- Generar un dashboard HTML interactivo con `monitor_stocks.py --view dashboard`.
 - Crear predicciones futuras y, cuando se solicite, varias líneas ancladas en días históricos mediante `--past-days`.
 - Inspeccionar resultados, logs, archivos generados y errores del flujo.
 
@@ -46,10 +47,11 @@ El monitor abre una ventana por ticker y permanece activo hasta que se cierren l
 9. Antes de inferir, lista los modelos disponibles y escoge el modelo cuyo nombre contenga el ticker normalizado, por ejemplo `OXY_historical_..._lstm_model.h5`. No uses ciegamente el primer `.h5` si existe un modelo coincidente.
 10. Si falta un modelo coincidente, busca primero un modelo explícitamente indicado por el usuario. Si aun así falta y el usuario pidió inferencia, prepara automáticamente el histórico del ticker con `--period max`, avisa que el entrenamiento puede tardar y ejecuta `train_lstm_model.py`; no ejecutes un modelo de otro ticker silenciosamente. Si el usuario pidió únicamente una descarga o inspección, no entrenes sin necesidad.
 11. Ejecuta el monitor con la interfaz actual: `--tickers` en plural, no `--ticker`; usa `--days` para el horizonte y `--past-days` cuando corresponda. El monitor actualizado resuelve automáticamente un modelo exacto por ticker cuando no se pasa `--model`; solo usa `--model` como override explícito para una ejecución individual o un modelo compartido solicitado por el usuario.
-12. Como `monitor_stocks.py` abre ventanas gráficas y usa multiprocessing, advierte de forma breve que puede abrir una ventana por ticker y espera a que el proceso termine. No lo reemplaces por una simulación.
-13. En el flujo predeterminado completo, actualiza y reentrena aunque ya existan datos o modelos, porque el usuario está solicitando una actualización explícita. Fuera de ese flujo, no descargues ni entrenes de nuevo si ya hay datos/modelo adecuados, salvo que el usuario pida actualizar datos, cambiar el periodo, reentrenar o forzar una actualización.
-14. Si Yahoo Finance devuelve datos vacíos, una excepción o un ticker inválido, reporta el ticker afectado y continúa con los demás cuando sea posible.
-15. No presentes las predicciones como consejo financiero. Indica que son resultados del modelo y pueden fallar, especialmente para instrumentos distintos al usado en entrenamiento.
+12. Si el usuario pide un dashboard, ejecuta `monitor_stocks.py` con `--view dashboard`; genera por defecto `data/dashboard/stock_dashboard.html` y no abras ventanas de Matplotlib. Usa `--dashboard-output` solo cuando solicite otra ruta.
+13. Como `monitor_stocks.py` abre ventanas gráficas y usa multiprocessing en modo `windows`, advierte de forma breve que puede abrir una ventana por ticker y espera a que el proceso termine. En modo `dashboard`, informa la ruta del HTML generado.
+14. En el flujo predeterminado completo, actualiza y reentrena aunque ya existan datos o modelos, porque el usuario está solicitando una actualización explícita. Fuera de ese flujo, no descargues ni entrenes de nuevo si ya hay datos/modelo adecuados, salvo que el usuario pida actualizar datos, cambiar el periodo, reentrenar o forzar una actualización.
+15. Si Yahoo Finance devuelve datos vacíos, una excepción o un ticker inválido, reporta el ticker afectado y continúa con los demás cuando sea posible.
+16. No presentes las predicciones como consejo financiero. Indica que son resultados del modelo y pueden fallar, especialmente para instrumentos distintos al usado en entrenamiento.
 
 ## Flujo operativo
 
@@ -86,6 +88,12 @@ Inferencia con anclas históricas:
 py -3 monitor_stocks.py --tickers OXY --model data/models/OXY_historical_1y_YYYYMMDD_lstm_model.h5 --days 7 --past-days 5
 ```
 
+Dashboard HTML:
+
+```powershell
+py -3 monitor_stocks.py --tickers OXY AAPL --days 7 --past-days 7 --view dashboard
+```
+
 Entrenamiento automático cuando falta un modelo compatible para una inferencia:
 
 ```powershell
@@ -99,6 +107,7 @@ Sustituye siempre los nombres de ejemplo por rutas y archivos reales encontrados
 Responde en español salvo que el usuario use otro idioma. Antes de ejecutar una operación potencialmente larga, indica en una frase qué vas a hacer. Al terminar, informa:
 
 - qué operación se ejecutó;
+
 - tickers y parámetros inferidos;
 - modelo utilizado por ticker;
 - resultado o rutas de archivos;
