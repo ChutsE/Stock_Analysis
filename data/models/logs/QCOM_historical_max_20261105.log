@@ -1,0 +1,33 @@
+2026-11-05 18:13:40,570 - INFO - 
+Processing: QCOM_historical_max_20261105.csv
+2026-11-05 18:13:40,984 - INFO - Total records: 8786
+2026-11-05 18:13:40,987 - INFO - Date range: 1991-12-13 00:00:00-05:00 to 2026-11-05 00:00:00-05:00
+2026-11-05 18:13:40,987 - INFO - Close price range: $0.24 - $248.74
+2026-11-05 18:13:40,993 - INFO - 
+Train set: 7908 records (1991-12-13 00:00:00-05:00 to 2023-05-08 00:00:00-04:00)
+2026-11-05 18:13:40,996 - INFO - Validation set: 878 records (2023-05-09 00:00:00-04:00 to 2026-11-05 00:00:00-05:00)
+2026-11-05 18:13:41,013 - INFO - 
+Sequence shapes:
+2026-11-05 18:13:41,014 - INFO -   X_train: (7848, 60, 1), y_train: (7848, 1)
+2026-11-05 18:13:41,014 - INFO -   X_val: (818, 60, 1), y_val: (818, 1)
+2026-11-05 18:13:41,015 - INFO - 
+Building LSTM model...
+2026-11-05 18:13:41,915 - INFO - None
+2026-11-05 18:13:41,916 - INFO - 
+Training model (50 epochs)...
+2026-11-05 18:21:41,550 - INFO - 
+Making predictions...
+2026-11-05 18:21:45,168 - INFO - 
+======================================================================
+2026-11-05 18:21:45,168 - INFO - TRAINING RESULTS - QCOM_historical_max_20261105.csv
+2026-11-05 18:21:45,168 - INFO - ======================================================================
+2026-11-05 18:21:45,168 - INFO - Training RMSE: $1.43
+2026-11-05 18:21:45,168 - INFO - Training MAE: $0.74
+2026-11-05 18:21:45,169 - INFO - Validation RMSE: $5.26
+2026-11-05 18:21:45,169 - INFO - Validation MAE: $3.45
+2026-11-05 18:21:45,208 - INFO - 
+Model saved to: data\models\QCOM_historical_max_20261105_lstm_model.h5
+2026-11-05 18:21:45,208 - INFO - 
+Generating plots...
+2026-11-05 18:21:45,899 - INFO - 
+Completed QCOM_historical_max_20261105.csv!

@@ -1,0 +1,33 @@
+2026-11-05 17:36:08,574 - INFO - 
+Processing: INTC_historical_max_20261105.csv
+2026-11-05 17:36:08,782 - INFO - Total records: 11756
+2026-11-05 17:36:08,786 - INFO - Date range: 1980-03-17 00:00:00-05:00 to 2026-11-05 00:00:00-05:00
+2026-11-05 17:36:08,787 - INFO - Close price range: $0.12 - $140.94
+2026-11-05 17:36:08,790 - INFO - 
+Train set: 10581 records (1980-03-17 00:00:00-05:00 to 2022-03-02 00:00:00-05:00)
+2026-11-05 17:36:08,791 - INFO - Validation set: 1175 records (2022-03-03 00:00:00-05:00 to 2026-11-05 00:00:00-05:00)
+2026-11-05 17:36:08,803 - INFO - 
+Sequence shapes:
+2026-11-05 17:36:08,820 - INFO -   X_train: (10521, 60, 1), y_train: (10521, 1)
+2026-11-05 17:36:08,820 - INFO -   X_val: (1115, 60, 1), y_val: (1115, 1)
+2026-11-05 17:36:08,820 - INFO - 
+Building LSTM model...
+2026-11-05 17:36:08,878 - INFO - None
+2026-11-05 17:36:08,878 - INFO - 
+Training model (50 epochs)...
+2026-11-05 17:46:41,170 - INFO - 
+Making predictions...
+2026-11-05 17:46:46,676 - INFO - 
+======================================================================
+2026-11-05 17:46:46,676 - INFO - TRAINING RESULTS - INTC_historical_max_20261105.csv
+2026-11-05 17:46:46,676 - INFO - ======================================================================
+2026-11-05 17:46:46,676 - INFO - Training RMSE: $0.85
+2026-11-05 17:46:46,677 - INFO - Training MAE: $0.62
+2026-11-05 17:46:46,677 - INFO - Validation RMSE: $2.92
+2026-11-05 17:46:46,677 - INFO - Validation MAE: $1.71
+2026-11-05 17:46:46,724 - INFO - 
+Model saved to: data\models\INTC_historical_max_20261105_lstm_model.h5
+2026-11-05 17:46:46,724 - INFO - 
+Generating plots...
+2026-11-05 17:46:47,367 - INFO - 
+Completed INTC_historical_max_20261105.csv!

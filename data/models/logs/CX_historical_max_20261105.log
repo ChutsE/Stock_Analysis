@@ -1,0 +1,33 @@
+2026-11-05 17:24:34,012 - INFO - 
+Processing: CX_historical_max_20261105.csv
+2026-11-05 17:24:34,163 - INFO - Total records: 6828
+2026-11-05 17:24:34,163 - INFO - Date range: 1999-09-15 00:00:00-04:00 to 2026-11-05 00:00:00-05:00
+2026-11-05 17:24:34,163 - INFO - Close price range: $1.59 - $28.64
+2026-11-05 17:24:34,195 - INFO - 
+Train set: 6146 records (1999-09-15 00:00:00-04:00 to 2024-02-16 00:00:00-05:00)
+2026-11-05 17:24:34,195 - INFO - Validation set: 682 records (2024-02-20 00:00:00-05:00 to 2026-11-05 00:00:00-05:00)
+2026-11-05 17:24:34,201 - INFO - 
+Sequence shapes:
+2026-11-05 17:24:34,201 - INFO -   X_train: (6086, 60, 1), y_train: (6086, 1)
+2026-11-05 17:24:34,201 - INFO -   X_val: (622, 60, 1), y_val: (622, 1)
+2026-11-05 17:24:34,201 - INFO - 
+Building LSTM model...
+2026-11-05 17:24:34,445 - INFO - None
+2026-11-05 17:24:34,445 - INFO - 
+Training model (50 epochs)...
+2026-11-05 17:30:03,260 - INFO - 
+Making predictions...
+2026-11-05 17:30:06,863 - INFO - 
+======================================================================
+2026-11-05 17:30:06,863 - INFO - TRAINING RESULTS - CX_historical_max_20261105.csv
+2026-11-05 17:30:06,863 - INFO - ======================================================================
+2026-11-05 17:30:06,863 - INFO - Training RMSE: $0.32
+2026-11-05 17:30:06,863 - INFO - Training MAE: $0.24
+2026-11-05 17:30:06,863 - INFO - Validation RMSE: $0.25
+2026-11-05 17:30:06,863 - INFO - Validation MAE: $0.20
+2026-11-05 17:30:06,907 - INFO - 
+Model saved to: data\models\CX_historical_max_20261105_lstm_model.h5
+2026-11-05 17:30:06,908 - INFO - 
+Generating plots...
+2026-11-05 17:30:07,550 - INFO - 
+Completed CX_historical_max_20261105.csv!

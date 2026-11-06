@@ -21,11 +21,23 @@ Puedes operar estas funciones:
 - Crear predicciones futuras y, cuando se solicite, varias líneas ancladas en días históricos mediante `--past-days`.
 - Inspeccionar resultados, logs, archivos generados y errores del flujo.
 
+## Flujo predeterminado completo
+
+Cuando el usuario pida iniciar o actualizar el análisis de todos los stocks, ejecuta este flujo en orden:
+
+1. Identifica todos los tickers representados por los históricos o modelos del proyecto.
+2. Actualiza todos sus históricos con `get_stock_history.py --period max --interval 1d --output-dir data/historical`.
+3. Entrena todos los CSV `*_historical_*.csv` disponibles ejecutando `train_lstm_model.py`.
+4. Ejecuta un solo comando de monitor para todos los tickers con `--days 7 --past-days 7`.
+5. Usa el modelo que corresponda exactamente a cada ticker; nunca compartas silenciosamente el modelo de un ticker con otro.
+
+El monitor abre una ventana por ticker y permanece activo hasta que se cierren las ventanas. Este flujo completo es el valor predeterminado para peticiones como "actualiza y analiza todos", "ver todos los stocks" o "ejecuta todo". Para un solo ticker o una consulta únicamente descriptiva, conserva el alcance solicitado y no actualices ni reentrenes activos no relacionados.
+
 ## Reglas de decisión
 
 1. Trabaja siempre desde la raíz del workspace y verifica que existan `get_stock_history.py`, `monitor_stocks.py`, `data/historical/` y `data/models/` antes de ejecutar.
 2. Extrae los tickers de la petición. Acepta acciones, ETFs, índices, forex y cripto. Si no hay ticker, pregunta solo por el ticker; no inventes uno.
-3. Si el usuario dice "analiza", "revisa" o "dame una predicción" sin periodo, usa un histórico de `1y`, intervalo `1d` y pronóstico de 7 días como valores por defecto.
+3. Si el usuario dice "analiza", "revisa" o "dame una predicción" para todos los stocks sin periodo, el flujo predeterminado usa histórico `max`, intervalo `1d`, pronóstico de 7 días y `--past-days 7`. Para un ticker individual sin periodo, usa `1y`, intervalo `1d` y pronóstico de 7 días.
 4. Si pide predicciones desde días pasados, interpreta "N días pasados" como `--past-days N`; el día actual se incluye automáticamente, por lo que habrá `N + 1` líneas. Si pide "N líneas", usa `--past-days N-1`.
 5. Si pide un horizonte futuro explícito, úsalo como `--days`. Si no lo pide, usa 7 días.
 6. No confundas días calendario con sesiones: el monitor genera fechas futuras de lunes a viernes. Explica esta decisión brevemente cuando sea relevante.
@@ -33,9 +45,9 @@ Puedes operar estas funciones:
 8. Para descargar históricos usa siempre `get_stock_history.py` con los tickers, `--period`, `--interval 1d`, y `--output-dir data/historical`. Añade `--stats` si el usuario pide estadísticas, indicadores o análisis descriptivo.
 9. Antes de inferir, lista los modelos disponibles y escoge el modelo cuyo nombre contenga el ticker normalizado, por ejemplo `OXY_historical_..._lstm_model.h5`. No uses ciegamente el primer `.h5` si existe un modelo coincidente.
 10. Si falta un modelo coincidente, busca primero un modelo explícitamente indicado por el usuario. Si aun así falta y el usuario pidió inferencia, prepara automáticamente el histórico del ticker con `--period max`, avisa que el entrenamiento puede tardar y ejecuta `train_lstm_model.py`; no ejecutes un modelo de otro ticker silenciosamente. Si el usuario pidió únicamente una descarga o inspección, no entrenes sin necesidad.
-11. Ejecuta el monitor con la interfaz actual: `--tickers` en plural, no `--ticker`; añade `--model` para el modelo elegido, `--days` para el horizonte y `--past-days` solo cuando sea mayor que cero.
+11. Ejecuta el monitor con la interfaz actual: `--tickers` en plural, no `--ticker`; usa `--days` para el horizonte y `--past-days` cuando corresponda. El monitor actualizado resuelve automáticamente un modelo exacto por ticker cuando no se pasa `--model`; solo usa `--model` como override explícito para una ejecución individual o un modelo compartido solicitado por el usuario.
 12. Como `monitor_stocks.py` abre ventanas gráficas y usa multiprocessing, advierte de forma breve que puede abrir una ventana por ticker y espera a que el proceso termine. No lo reemplaces por una simulación.
-13. No descargues ni entrenes de nuevo si ya hay datos/modelo adecuados, salvo que el usuario pida actualizar datos, cambiar el periodo, reentrenar o forzar una actualización.
+13. En el flujo predeterminado completo, actualiza y reentrena aunque ya existan datos o modelos, porque el usuario está solicitando una actualización explícita. Fuera de ese flujo, no descargues ni entrenes de nuevo si ya hay datos/modelo adecuados, salvo que el usuario pida actualizar datos, cambiar el periodo, reentrenar o forzar una actualización.
 14. Si Yahoo Finance devuelve datos vacíos, una excepción o un ticker inválido, reporta el ticker afectado y continúa con los demás cuando sea posible.
 15. No presentes las predicciones como consejo financiero. Indica que son resultados del modelo y pueden fallar, especialmente para instrumentos distintos al usado en entrenamiento.
 
@@ -43,8 +55,8 @@ Puedes operar estas funciones:
 
 1. Lee la petición y resume internamente: tickers, periodo histórico, intervalo, horizonte, anclas pasadas, estadísticas y si quiere descargar, inferir o ambas cosas.
 2. Inspecciona solo los archivos y directorios necesarios para comprobar datos y modelos actuales.
-3. Decide qué falta. Descarga primero si el histórico solicitado no existe o está desactualizado; después resuelve el modelo. Para una inferencia sin modelo compatible, usa un histórico suficientemente largo (`max`) y entrena automáticamente antes de ejecutar el monitor.
-4. Ejecuta el comando elegido con argumentos completos, aunque el usuario no los haya escrito.
+3. En el flujo completo, descarga primero todos los históricos con `max` diario y después entrena todos los CSV. En una inferencia acotada, descarga solo si el histórico solicitado no existe o está desactualizado; después resuelve el modelo. Para una inferencia sin modelo compatible, usa un histórico suficientemente largo (`max`) y entrena automáticamente antes de ejecutar el monitor.
+4. Ejecuta el comando elegido con argumentos completos, aunque el usuario no los haya escrito. Para el flujo completo, la monitorización debe ser una sola llamada con todos los tickers, `--days 7` y `--past-days 7`.
 5. Verifica el resultado observando código de salida, archivos creados o salida del monitor. Si falla, corrige únicamente el argumento o dependencia local responsable y vuelve a intentar una vez.
 6. Entrega un resumen conciso con tickers procesados, periodo, horizonte, número de anclas, modelo usado, archivos relevantes y cualquier ticker que no pudo procesarse.
 
@@ -65,7 +77,7 @@ py -3 get_stock_history.py OXY --period 1y --interval 1d --output-dir data/histo
 Inferencia actual:
 
 ```powershell
-py -3 monitor_stocks.py --tickers OXY AAPL --model data/models/OXY_historical_1y_YYYYMMDD_lstm_model.h5 --days 7
+py -3 monitor_stocks.py --tickers OXY AAPL --days 7 --past-days 7
 ```
 
 Inferencia con anclas históricas:

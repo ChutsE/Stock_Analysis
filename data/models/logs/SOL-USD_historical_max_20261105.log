@@ -1,0 +1,33 @@
+2026-11-05 18:23:46,262 - INFO - 
+Processing: SOL-USD_historical_max_20261105.csv
+2026-11-05 18:23:46,274 - INFO - Total records: 2401
+2026-11-05 18:23:46,275 - INFO - Date range: 2020-04-10 00:00:00+00:00 to 2026-11-05 00:00:00+00:00
+2026-11-05 18:23:46,275 - INFO - Close price range: $0.52 - $261.87
+2026-11-05 18:23:46,277 - INFO - 
+Train set: 2161 records (2020-04-10 00:00:00+00:00 to 2026-03-10 00:00:00+00:00)
+2026-11-05 18:23:46,277 - INFO - Validation set: 240 records (2026-03-11 00:00:00+00:00 to 2026-11-05 00:00:00+00:00)
+2026-11-05 18:23:46,280 - INFO - 
+Sequence shapes:
+2026-11-05 18:23:46,280 - INFO -   X_train: (2101, 60, 1), y_train: (2101, 1)
+2026-11-05 18:23:46,280 - INFO -   X_val: (180, 60, 1), y_val: (180, 1)
+2026-11-05 18:23:46,280 - INFO - 
+Building LSTM model...
+2026-11-05 18:23:46,339 - INFO - None
+2026-11-05 18:23:46,339 - INFO - 
+Training model (50 epochs)...
+2026-11-05 18:25:55,545 - INFO - 
+Making predictions...
+2026-11-05 18:25:57,065 - INFO - 
+======================================================================
+2026-11-05 18:25:57,065 - INFO - TRAINING RESULTS - SOL-USD_historical_max_20261105.csv
+2026-11-05 18:25:57,065 - INFO - ======================================================================
+2026-11-05 18:25:57,066 - INFO - Training RMSE: $7.15
+2026-11-05 18:25:57,066 - INFO - Training MAE: $4.74
+2026-11-05 18:25:57,066 - INFO - Validation RMSE: $5.17
+2026-11-05 18:25:57,066 - INFO - Validation MAE: $4.47
+2026-11-05 18:25:57,108 - INFO - 
+Model saved to: data\models\SOL-USD_historical_max_20261105_lstm_model.h5
+2026-11-05 18:25:57,108 - INFO - 
+Generating plots...
+2026-11-05 18:25:57,680 - INFO - 
+Completed SOL-USD_historical_max_20261105.csv!

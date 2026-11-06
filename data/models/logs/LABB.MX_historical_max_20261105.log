@@ -1,0 +1,33 @@
+2026-11-05 17:49:52,486 - INFO - 
+Processing: LABB.MX_historical_max_20261105.csv
+2026-11-05 17:49:52,595 - INFO - Total records: 4616
+2026-11-05 17:49:52,597 - INFO - Date range: 2008-06-18 00:00:00-05:00 to 2026-11-05 00:00:00-06:00
+2026-11-05 17:49:52,597 - INFO - Close price range: $2.59 - $30.07
+2026-11-05 17:49:52,600 - INFO - 
+Train set: 4155 records (2008-06-18 00:00:00-05:00 to 2025-01-03 00:00:00-06:00)
+2026-11-05 17:49:52,601 - INFO - Validation set: 461 records (2025-01-06 00:00:00-06:00 to 2026-11-05 00:00:00-06:00)
+2026-11-05 17:49:52,605 - INFO - 
+Sequence shapes:
+2026-11-05 17:49:52,606 - INFO -   X_train: (4095, 60, 1), y_train: (4095, 1)
+2026-11-05 17:49:52,606 - INFO -   X_val: (401, 60, 1), y_val: (401, 1)
+2026-11-05 17:49:52,606 - INFO - 
+Building LSTM model...
+2026-11-05 17:49:52,665 - INFO - None
+2026-11-05 17:49:52,665 - INFO - 
+Training model (50 epochs)...
+2026-11-05 17:54:30,214 - INFO - 
+Making predictions...
+2026-11-05 17:54:33,068 - INFO - 
+======================================================================
+2026-11-05 17:54:33,068 - INFO - TRAINING RESULTS - LABB.MX_historical_max_20261105.csv
+2026-11-05 17:54:33,069 - INFO - ======================================================================
+2026-11-05 17:54:33,069 - INFO - Training RMSE: $0.38
+2026-11-05 17:54:33,069 - INFO - Training MAE: $0.26
+2026-11-05 17:54:33,069 - INFO - Validation RMSE: $0.40
+2026-11-05 17:54:33,069 - INFO - Validation MAE: $0.29
+2026-11-05 17:54:33,111 - INFO - 
+Model saved to: data\models\LABB.MX_historical_max_20261105_lstm_model.h5
+2026-11-05 17:54:33,112 - INFO - 
+Generating plots...
+2026-11-05 17:54:34,042 - INFO - 
+Completed LABB.MX_historical_max_20261105.csv!

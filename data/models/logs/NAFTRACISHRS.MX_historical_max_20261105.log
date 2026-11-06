@@ -1,0 +1,33 @@
+2026-11-05 17:54:34,043 - INFO - 
+Processing: NAFTRACISHRS.MX_historical_max_20261105.csv
+2026-11-05 17:54:34,252 - INFO - Total records: 5695
+2026-11-05 17:54:34,254 - INFO - Date range: 2003-04-29 00:00:00-05:00 to 2026-11-05 00:00:00-06:00
+2026-11-05 17:54:34,255 - INFO - Close price range: $4.41 - $70.92
+2026-11-05 17:54:34,258 - INFO - 
+Train set: 5126 records (2003-04-29 00:00:00-05:00 to 2024-07-30 00:00:00-06:00)
+2026-11-05 17:54:34,259 - INFO - Validation set: 569 records (2024-07-31 00:00:00-06:00 to 2026-11-05 00:00:00-06:00)
+2026-11-05 17:54:34,310 - INFO - 
+Sequence shapes:
+2026-11-05 17:54:34,310 - INFO -   X_train: (5066, 60, 1), y_train: (5066, 1)
+2026-11-05 17:54:34,310 - INFO -   X_val: (509, 60, 1), y_val: (509, 1)
+2026-11-05 17:54:34,311 - INFO - 
+Building LSTM model...
+2026-11-05 17:54:34,383 - INFO - None
+2026-11-05 17:54:34,383 - INFO - 
+Training model (50 epochs)...
+2026-11-05 18:00:29,516 - INFO - 
+Making predictions...
+2026-11-05 18:00:32,431 - INFO - 
+======================================================================
+2026-11-05 18:00:32,431 - INFO - TRAINING RESULTS - NAFTRACISHRS.MX_historical_max_20261105.csv
+2026-11-05 18:00:32,432 - INFO - ======================================================================
+2026-11-05 18:00:32,432 - INFO - Training RMSE: $1.01
+2026-11-05 18:00:32,432 - INFO - Training MAE: $0.85
+2026-11-05 18:00:32,433 - INFO - Validation RMSE: $1.88
+2026-11-05 18:00:32,433 - INFO - Validation MAE: $1.72
+2026-11-05 18:00:32,463 - INFO - 
+Model saved to: data\models\NAFTRACISHRS.MX_historical_max_20261105_lstm_model.h5
+2026-11-05 18:00:32,464 - INFO - 
+Generating plots...
+2026-11-05 18:00:33,219 - INFO - 
+Completed NAFTRACISHRS.MX_historical_max_20261105.csv!

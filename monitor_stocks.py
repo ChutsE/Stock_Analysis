@@ -267,6 +267,15 @@ def monitor_single_stock(ticker, model_path, days=7, lookback=60, past_days=0):
         traceback.print_exc()
 
 
+def find_model_for_ticker(ticker, models_dir):
+    """Find the newest model whose filename starts with the exact ticker."""
+    matching_models = sorted(
+        models_dir.glob(f"{ticker}_historical_*_lstm_model.h5"),
+        reverse=True,
+    )
+    return matching_models[0] if matching_models else None
+
+
 def main():
     """Main function to launch multi-stock monitor."""
     
@@ -311,20 +320,30 @@ def main():
     print(f"\nMonitoring {len(args.tickers)} stocks: {', '.join(args.tickers)}")
     print(f"Prediction window: {args.days} days from {args.past_days + 1} anchor(s)")
     
-    # Find model file
+    # Resolve one model per ticker unless a shared model was explicitly provided.
     data_models_dir = Path("data/models/")
     if args.model:
         model_path = Path(args.model)
-    else:
-        model_files = list(data_models_dir.glob("*_lstm_model.h5"))
-        if not model_files:
-            print("\nError: No trained model found in data/models folder.")
-            print("Train a model first using train_lstm_model.py")
+        if not model_path.exists():
+            print(f"\nError: Model file not found: {model_path}")
             return
-        model_path = model_files[0]
-        print(f"\nUsing model: {model_path.name}")
-    
-    if not model_path.exists():
+        model_paths = {ticker: model_path for ticker in args.tickers}
+    else:
+        model_paths = {
+            ticker: find_model_for_ticker(ticker, data_models_dir)
+            for ticker in args.tickers
+        }
+        missing_models = [ticker for ticker, path in model_paths.items() if path is None]
+        if missing_models:
+            print("\nError: No matching model found for: " + ", ".join(missing_models))
+            print("Train the missing tickers first using train_lstm_model.py")
+            return
+
+        print("\nUsing matching model per ticker:")
+        for ticker, model_path in model_paths.items():
+            print(f"  {ticker}: {model_path.name}")
+
+    if any(not model_path.exists() for model_path in model_paths.values()):
         print(f"\nError: Model file not found: {model_path}")
         return
     
@@ -340,7 +359,7 @@ def main():
     for ticker in args.tickers:
         p = multiprocessing.Process(
             target=monitor_single_stock,
-            args=(ticker, model_path, args.days, lookback, args.past_days),
+            args=(ticker, model_paths[ticker], args.days, lookback, args.past_days),
             name=f"Monitor-{ticker}"
         )
         p.start()

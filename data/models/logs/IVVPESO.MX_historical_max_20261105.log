@@ -1,0 +1,33 @@
+2026-11-05 17:46:47,369 - INFO - 
+Processing: IVVPESO.MX_historical_max_20261105.csv
+2026-11-05 17:46:47,424 - INFO - Total records: 2995
+2026-11-05 17:46:47,426 - INFO - Date range: 2014-11-05 00:00:00-05:00 to 2026-11-04 00:00:00-05:00
+2026-11-05 17:46:47,426 - INFO - Close price range: $26.05 - $158.81
+2026-11-05 17:46:47,428 - INFO - 
+Train set: 2696 records (2014-11-05 00:00:00-05:00 to 2025-08-26 00:00:00-04:00)
+2026-11-05 17:46:47,429 - INFO - Validation set: 299 records (2025-08-27 00:00:00-04:00 to 2026-11-04 00:00:00-05:00)
+2026-11-05 17:46:47,432 - INFO - 
+Sequence shapes:
+2026-11-05 17:46:47,432 - INFO -   X_train: (2636, 60, 1), y_train: (2636, 1)
+2026-11-05 17:46:47,433 - INFO -   X_val: (239, 60, 1), y_val: (239, 1)
+2026-11-05 17:46:47,433 - INFO - 
+Building LSTM model...
+2026-11-05 17:46:47,486 - INFO - None
+2026-11-05 17:46:47,486 - INFO - 
+Training model (50 epochs)...
+2026-11-05 17:49:49,772 - INFO - 
+Making predictions...
+2026-11-05 17:49:51,827 - INFO - 
+======================================================================
+2026-11-05 17:49:51,827 - INFO - TRAINING RESULTS - IVVPESO.MX_historical_max_20261105.csv
+2026-11-05 17:49:51,827 - INFO - ======================================================================
+2026-11-05 17:49:51,827 - INFO - Training RMSE: $1.53
+2026-11-05 17:49:51,827 - INFO - Training MAE: $1.09
+2026-11-05 17:49:51,827 - INFO - Validation RMSE: $3.59
+2026-11-05 17:49:51,828 - INFO - Validation MAE: $3.22
+2026-11-05 17:49:51,865 - INFO - 
+Model saved to: data\models\IVVPESO.MX_historical_max_20261105_lstm_model.h5
+2026-11-05 17:49:51,866 - INFO - 
+Generating plots...
+2026-11-05 17:49:52,485 - INFO - 
+Completed IVVPESO.MX_historical_max_20261105.csv!
