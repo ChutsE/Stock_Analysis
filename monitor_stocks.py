@@ -315,6 +315,51 @@ def find_model_for_ticker(ticker, models_dir):
     return matching_models[0] if matching_models else None
 
 
+def evaluate_signal(data, predicted_price, rsi_oversold=30, rsi_overbought=70):
+    """Return a mechanical buy, sell, or wait signal from technical evidence."""
+    latest = data.dropna(subset=["RSI", "SMA20", "SMA50", "ATR14"]).iloc[-1]
+    current_price = float(latest["Close"])
+    predicted_return = (float(predicted_price) / current_price - 1) * 100
+    buy_triggers = []
+    sell_triggers = []
+
+    if latest["RSI"] <= rsi_oversold:
+        buy_triggers.append("RSI <= 30")
+    if latest["RSI"] >= rsi_overbought:
+        sell_triggers.append("RSI >= 70")
+    if current_price > latest["SMA20"]:
+        buy_triggers.append("Precio > SMA20")
+    else:
+        sell_triggers.append("Precio <= SMA20")
+    if latest["SMA20"] > latest["SMA50"]:
+        buy_triggers.append("SMA20 > SMA50")
+    else:
+        sell_triggers.append("SMA20 <= SMA50")
+    if predicted_return >= 2:
+        buy_triggers.append("Pronóstico >= +2%")
+    elif predicted_return <= -2:
+        sell_triggers.append("Pronóstico <= -2%")
+
+    buy_score = len(buy_triggers)
+    sell_score = len(sell_triggers)
+    if buy_score >= 3 and buy_score > sell_score:
+        decision = "COMPRA"
+    elif sell_score >= 3 and sell_score > buy_score:
+        decision = "VENTA"
+    else:
+        decision = "ESPERA"
+
+    return {
+        "decision": decision,
+        "buy_score": buy_score,
+        "sell_score": sell_score,
+        "confidence": max(buy_score, sell_score) / 4 * 100,
+        "buy_triggers": buy_triggers,
+        "sell_triggers": sell_triggers,
+        "predicted_return": predicted_return,
+    }
+
+
 def create_dashboard(tickers, model_paths, days, lookback, past_days, output_path):
     """Generate a standalone HTML dashboard for all requested tickers."""
     import plotly.graph_objects as go
@@ -332,6 +377,7 @@ def create_dashboard(tickers, model_paths, days, lookback, past_days, output_pat
             current_price = float(data['Close'].iloc[-1])
             predicted_price = float(current_forecast['prices'][-1])
             change_pct = (predicted_price / current_price - 1) * 100
+            signal = evaluate_signal(data, predicted_price)
             recent_data = data.iloc[-min(max(30, past_days + 1), len(data)):]
 
             figure = make_subplots(
@@ -408,6 +454,12 @@ def create_dashboard(tickers, model_paths, days, lookback, past_days, output_pat
                 )
             )
             direction = 'positive' if change_pct >= 0 else 'negative'
+            signal_class = signal['decision'].lower()
+            trigger_text = '; '.join(
+                signal['buy_triggers'] if signal['decision'] == 'COMPRA'
+                else signal['sell_triggers'] if signal['decision'] == 'VENTA'
+                else signal['buy_triggers'] + signal['sell_triggers']
+            ) or 'Sin triggers dominantes'
             latest_rsi = float(data['RSI'].iloc[-1])
             latest_atr = float(data['ATR14'].iloc[-1])
             rsi_state = (
@@ -428,6 +480,11 @@ def create_dashboard(tickers, model_paths, days, lookback, past_days, output_pat
                                         <span><b>ATR14</b> ${latest_atr:.2f}</span>
                                         <span><b>SMA20</b> ${float(data['SMA20'].iloc[-1]):.2f}</span>
                                         <span><b>SMA50</b> ${float(data['SMA50'].iloc[-1]):.2f}</span>
+                                    </div>
+                                    <div class="signal {signal_class}">
+                                        <strong>{signal['decision']}</strong>
+                                        <span>{signal['confidence']:.0f}% de evidencia · {signal['buy_score']} compra / {signal['sell_score']} venta</span>
+                                        <small>Triggers: {escape(trigger_text)}</small>
                                     </div>
                   {chart}
                   <table><thead><tr><th>Fecha</th><th>Pronóstico</th></tr></thead>
@@ -463,6 +520,11 @@ h2 {{ margin: 0 0 5px; font-size: 21px; }} .price {{ text-align: right; }}
 .metrics {{ display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }}
 .metrics span {{ background: #f1f5f9; border-radius: 999px; padding: 6px 9px; font-size: 12px; }}
 .metrics b {{ color: #334155; }} .metrics em {{ color: #64748b; font-style: normal; }}
+.signal {{ display: grid; gap: 3px; border-left: 4px solid #64748b; background: #f8fafc; padding: 9px 11px; margin: 10px 0; }}
+.signal strong {{ font-size: 16px; }} .signal span, .signal small {{ color: #64748b; font-size: 12px; }}
+.signal.compra {{ border-color: #15803d; background: #f0fdf4; }} .signal.compra strong {{ color: #15803d; }}
+.signal.venta {{ border-color: #b91c1c; background: #fef2f2; }} .signal.venta strong {{ color: #b91c1c; }}
+.signal.espera {{ border-color: #ca8a04; background: #fefce8; }} .signal.espera strong {{ color: #a16207; }}
 th, td {{ padding: 7px 4px; border-bottom: 1px solid #edf1f5; text-align: left; }}
 th {{ color: #526174; font-size: 12px; text-transform: uppercase; }}
 .notice {{ background: #fff7ed; border-left: 4px solid #f59e0b; padding: 12px 16px; margin-bottom: 20px; }}

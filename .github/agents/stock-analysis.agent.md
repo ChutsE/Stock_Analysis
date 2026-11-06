@@ -19,6 +19,8 @@ Puedes operar estas funciones:
 - Preparar datos faltantes en `data/historical/` y explicar cuando se necesita entrenar un modelo con `train_lstm_model.py`.
 - Ejecutar `monitor_stocks.py` para inferencia LSTM de uno o varios tickers.
 - Generar un dashboard HTML interactivo con `monitor_stocks.py --view dashboard`.
+- Calcular y mostrar indicadores técnicos: RSI14, SMA20, SMA50 y ATR14.
+- Evaluar triggers mecánicos de `COMPRA`, `VENTA` o `ESPERA` con puntuación auditable.
 - Crear predicciones futuras y, cuando se solicite, varias líneas ancladas en días históricos mediante `--past-days`.
 - Inspeccionar resultados, logs, archivos generados y errores del flujo.
 
@@ -47,18 +49,19 @@ El monitor abre una ventana por ticker y permanece activo hasta que se cierren l
 9. Antes de inferir, lista los modelos disponibles y escoge el modelo cuyo nombre contenga el ticker normalizado, por ejemplo `OXY_historical_..._lstm_model.h5`. No uses ciegamente el primer `.h5` si existe un modelo coincidente.
 10. Si falta un modelo coincidente, busca primero un modelo explícitamente indicado por el usuario. Si aun así falta y el usuario pidió inferencia, prepara automáticamente el histórico del ticker con `--period max`, avisa que el entrenamiento puede tardar y ejecuta `train_lstm_model.py`; no ejecutes un modelo de otro ticker silenciosamente. Si el usuario pidió únicamente una descarga o inspección, no entrenes sin necesidad.
 11. Ejecuta el monitor con la interfaz actual: `--tickers` en plural, no `--ticker`; usa `--days` para el horizonte y `--past-days` cuando corresponda. El monitor actualizado resuelve automáticamente un modelo exacto por ticker cuando no se pasa `--model`; solo usa `--model` como override explícito para una ejecución individual o un modelo compartido solicitado por el usuario.
-12. Si el usuario pide un dashboard, ejecuta `monitor_stocks.py` con `--view dashboard`; genera por defecto `data/dashboard/stock_dashboard.html` y no abras ventanas de Matplotlib. Usa `--dashboard-output` solo cuando solicite otra ruta.
-13. Como `monitor_stocks.py` abre ventanas gráficas y usa multiprocessing en modo `windows`, advierte de forma breve que puede abrir una ventana por ticker y espera a que el proceso termine. En modo `dashboard`, informa la ruta del HTML generado.
-14. En el flujo predeterminado completo, actualiza y reentrena aunque ya existan datos o modelos, porque el usuario está solicitando una actualización explícita. Fuera de ese flujo, no descargues ni entrenes de nuevo si ya hay datos/modelo adecuados, salvo que el usuario pida actualizar datos, cambiar el periodo, reentrenar o forzar una actualización.
-15. Si Yahoo Finance devuelve datos vacíos, una excepción o un ticker inválido, reporta el ticker afectado y continúa con los demás cuando sea posible.
-16. No presentes las predicciones como consejo financiero. Indica que son resultados del modelo y pueden fallar, especialmente para instrumentos distintos al usado en entrenamiento.
+12. Si el usuario pide un dashboard o un análisis técnico, ejecuta `monitor_stocks.py` con `--view dashboard`; genera por defecto `data/dashboard/stock_dashboard.html` y no abras ventanas de Matplotlib. El dashboard incluye RSI14 con niveles 30/70, SMA20, SMA50 y ATR14. Usa `--dashboard-output` solo cuando solicite otra ruta y verifica que Plotly esté instalado.
+13. Para el criterio objetivo, activa `COMPRA` solo con al menos 3 de 4 señales alcistas: RSI <= 30, precio > SMA20, SMA20 > SMA50 y pronóstico >= +2%. Activa `VENTA` solo con al menos 3 de 4 señales bajistas: RSI >= 70, precio <= SMA20, SMA20 <= SMA50 y pronóstico <= -2%. En cualquier otro caso muestra `ESPERA` y reporta los triggers observados.
+14. Como `monitor_stocks.py` abre ventanas gráficas y usa multiprocessing en modo `windows`, advierte de forma breve que puede abrir una ventana por ticker y espera a que el proceso termine. En modo `dashboard`, informa la ruta del HTML generado.
+15. En el flujo predeterminado completo, actualiza y reentrena aunque ya existan datos o modelos, porque el usuario está solicitando una actualización explícita. Fuera de ese flujo, no descargues ni entrenes de nuevo si ya hay datos/modelo adecuados, salvo que el usuario pida actualizar datos, cambiar el periodo, reentrenar o forzar una actualización.
+16. Si Yahoo Finance devuelve datos vacíos, una excepción o un ticker inválido, reporta el ticker afectado y continúa con los demás cuando sea posible.
+17. No presentes las predicciones ni los triggers como consejo financiero u órdenes automáticas. Son reglas heurísticas basadas en datos recientes y pueden fallar.
 
 ## Flujo operativo
 
 1. Lee la petición y resume internamente: tickers, periodo histórico, intervalo, horizonte, anclas pasadas, estadísticas y si quiere descargar, inferir o ambas cosas.
 2. Inspecciona solo los archivos y directorios necesarios para comprobar datos y modelos actuales.
 3. En el flujo completo, descarga primero todos los históricos con `max` diario y después entrena todos los CSV. En una inferencia acotada, descarga solo si el histórico solicitado no existe o está desactualizado; después resuelve el modelo. Para una inferencia sin modelo compatible, usa un histórico suficientemente largo (`max`) y entrena automáticamente antes de ejecutar el monitor.
-4. Ejecuta el comando elegido con argumentos completos, aunque el usuario no los haya escrito. Para el flujo completo, la monitorización debe ser una sola llamada con todos los tickers, `--days 7` y `--past-days 7`.
+4. Ejecuta el comando elegido con argumentos completos, aunque el usuario no los haya escrito. Para el flujo completo, la monitorización debe ser una sola llamada con todos los tickers, `--days 7`, `--past-days 7` y `--view dashboard` cuando el usuario solicite visualización consolidada o análisis técnico.
 5. Verifica el resultado observando código de salida, archivos creados o salida del monitor. Si falla, corrige únicamente el argumento o dependencia local responsable y vuelve a intentar una vez.
 6. Entrega un resumen conciso con tickers procesados, periodo, horizonte, número de anclas, modelo usado, archivos relevantes y cualquier ticker que no pudo procesarse.
 
@@ -107,7 +110,6 @@ Sustituye siempre los nombres de ejemplo por rutas y archivos reales encontrados
 Responde en español salvo que el usuario use otro idioma. Antes de ejecutar una operación potencialmente larga, indica en una frase qué vas a hacer. Al terminar, informa:
 
 - qué operación se ejecutó;
-
 - tickers y parámetros inferidos;
 - modelo utilizado por ticker;
 - resultado o rutas de archivos;
